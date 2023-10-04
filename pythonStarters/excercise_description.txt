@@ -1,0 +1,17 @@
+Exercise 1
+Consider a population of 200 persons:
+ 100 women
+ 100 men
+Every woman has a normally distributed weight with mean of 65 kg and a standard deviation of 12 kg.
+Every woman has a normally distributed height with mean of 168 cm and a standard deviation of 8 cm.
+Every man has a normally distributed weight with mean of 75 kg and a standard deviation of 12 kg.
+Every man has a normally distributed height with mean of 176 cm and a standard deviation of 10 cm.
+You should develop a program which can predict the gender of a person with a given height and weight.
+The prediction logic is the following:
+The nearest five persons of the population with respect to the unknown person are identified. The
+distance between two persons is defined as 
+
+Dij = ((Wi-Wj)^2+(Hi-Hj)^2)^(1/2)
+
+Then, these five nearest neighbors of the unknown person vote according to their gender. If most of the
+neighbors are women, then the prediction for the unknown point is “woman”. 
