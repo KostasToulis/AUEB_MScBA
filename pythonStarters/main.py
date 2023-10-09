@@ -97,7 +97,7 @@ if __name__ == '__main__':
     for i in women:
         if (i.gender == 'man'): menInWomen += 1
 
-    print('Percent of wrong men classifications: ', womenInMen/len(men)*100)
+    print('Percent of wrong men classifications: ', womenInMen / len(men) * 100)
     print('Percent of wrong women classifications: ', menInWomen / len(women) * 100)
 
     PlotFindings(people, men, women)
