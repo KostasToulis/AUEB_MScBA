@@ -1,4 +1,4 @@
-from generate_graph import CreateNodes, CreateVehicles, CalculateDistMatrix, PlotGraph
+from generate_graph import CreateNodes, CreateVehicles, CalculateDistMatrix, PlotGraph, CalculateDistance
 import numpy as np
 import math
 import time
@@ -15,6 +15,7 @@ class Route:
         self.id = id
         self.nodes = nodes
         self.cost = self.CalculateCost(nodes)
+        self.distance = self.CalculateRouteDistance(nodes)
         self.isAdded = False
 
     def CalculateCost(self, nodes):
@@ -22,6 +23,12 @@ class Route:
         for node in nodes:
             cost += node.demand
         return cost
+
+    def CalculateRouteDistance(self, nodes):
+        distance = 0
+        for i in range(len(nodes)-1):
+            distance += CalculateDistance(nodes[i], nodes[i+1])
+        return distance
 
 def CalculateSavingsMatrix(nodes, distMatrix):
     savings = []
@@ -39,25 +46,21 @@ def CheckEdgeNode(route, node):
         return False
 
 def CheckEdgeNodePosition(route, node):
-    if (route.nodes[1].id == node.id and route.nodes[-2].id == node.id):
-        return 0
-    elif (route.nodes[1].id == node.id):
+    if (route.nodes[1].id == node.id):
         return 1
     elif (route.nodes[-2].id == node.id):
         return 2
 
-def ConnectRoutes(route1, route2, position1, position2):
-    if (position1 > position2):
-        id = route1.id
-        route = route1.nodes[0:-1]
-        for i in range(1,len(route2.nodes)):
-            route.append(route2.nodes[i])
-    else:
-        id = route2.id
-        route = route2.nodes[0:-1]
-        for i in range(1, len(route1.nodes)):
-            route.append(route1.nodes[i])
+def ConnectRoutes(route1, route2):
+    id = route1.id
+    route = route1.nodes[:-1]
+    for i in range(1, len(route2.nodes)):
+        route.append(route2.nodes[i])
     return Route(id, route)
+
+def ReverseRoute(route):
+    route.nodes.reverse()
+    return route[1,:]
 
 def UpdateRouteNodes(route):
     for node in route.nodes:
@@ -65,7 +68,7 @@ def UpdateRouteNodes(route):
 
 nodes = CreateNodes(100)
 distMatrix = CalculateDistMatrix(nodes)
-capacity = 30
+capacity = 50
 savings = CalculateSavingsMatrix(nodes, distMatrix)
 
 #Create one route per customer
@@ -84,7 +87,16 @@ for saving in savings:
         if (route1.cost + route2.cost <= capacity):
             position1 = CheckEdgeNodePosition(route1, saving.i)
             position2 = CheckEdgeNodePosition(route2, saving.j)
-            route = ConnectRoutes(route1, route2, position1, position2)
+            if position1 == 2 and position2 == 1:
+                route = ConnectRoutes(route1, route2)
+            elif position1 == 2 and position2 == 2:
+                route2.nodes.reverse()
+                route = ConnectRoutes(route1, route2)
+            elif position1 == 1 and position2 == 1:
+                route1.nodes.reverse()
+                route = ConnectRoutes(route1, route2)
+            elif position1 == 1 and position2 == 2:
+                route = ConnectRoutes(route2, route1)
             UpdateRouteNodes(route)
 
 finalRoutes = []
@@ -94,11 +106,14 @@ for i in range(1,len(nodes)):
         nodes[i].route.isAdded = True
 
 coords = []
+solutionDist = 0
 for route in finalRoutes:
     path = []
+    solutionDist += route.distance
     for node in route.nodes:
         path.append([node.x, node.y])
     coords.append(path)
 
 print(coords)
+print(solutionDist)
 PlotGraph(coords)
