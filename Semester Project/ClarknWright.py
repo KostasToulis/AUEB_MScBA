@@ -1,4 +1,5 @@
 from Setup import CalculateDistMatrix, PlotGraph, CalculateDistance
+from Setup import CalculateSolutionCost, CalculateRouteCost
 import numpy as np
 import math
 import time
@@ -66,9 +67,28 @@ def UpdateRouteNodes(route):
     for node in route.nodes:
         node.route = route
 
-def ClarknWrightSol(nodes):
+def PrepareSolution(routes, nodes):
+    nodeIds = []
+    for route in routes:
+        n = []
+        route_t = CheckReverseRoute(route,nodes)
+        for i in range(len(route_t.nodes)-1):
+            n.append(route_t.nodes[i].ID)
+        nodeIds.append(n)
+    return nodeIds
+
+def CheckReverseRoute(route, nodes):
+    cost1 = CalculateRouteCost(nodes,[node.ID for node in route.nodes])
+    cost2 = CalculateRouteCost(nodes,[node.ID for node in route.nodes[-1:]])
+    if cost1<cost2:
+        return route
+    else:
+        route.nodes.reverse()
+        return route
+
+def ClarknWrightSol(nodes, c):
     distMatrix = CalculateDistMatrix(nodes)
-    capacity = 50
+    capacity = c
     savings = CalculateSavingsMatrix(nodes, distMatrix)
 
     #Create one route per customer
@@ -105,15 +125,16 @@ def ClarknWrightSol(nodes):
             finalRoutes.append(nodes[i].route)
             nodes[i].route.isAdded = True
 
-    coords = []
-    solutionDist = 0
-    for route in finalRoutes:
-        path = []
-        solutionDist += route.distance
-        for node in route.nodes:
-            path.append([node.x, node.y])
-        coords.append(path)
-
-    print(coords)
-    print(solutionDist)
-    PlotGraph(coords)
+    return PrepareSolution(finalRoutes, nodes)
+    # coords = []
+    # solutionDist = 0
+    # for route in finalRoutes:
+    #     path = []
+    #     solutionDist += route.distance
+    #     for node in route.nodes:
+    #         path.append([node.x, node.y])
+    #     coords.append(path)
+    #
+    # print(coords)
+    # print(solutionDist)
+    # PlotGraph(coords)

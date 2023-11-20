@@ -1,5 +1,5 @@
-from sol_checker import load_model, Node
-from Setup import CalculateDistMatrix, PlotInitial
+from sol_checker import load_model, Node, calculate_route_details
+from Setup import CalculateDistMatrix, PlotInitial, CalculateDistance, PlotGraph, CalculateSolutionCost
 from ClarknWright import ClarknWrightSol
 
 class Arc:
@@ -14,6 +14,27 @@ class Arc:
 # def Sweep(step, arc):
 
 
+
+
+
 nodes, capacity, weigth = load_model("Instance.txt")
 # PlotInitial(nodes)
-ClarknWrightSol(nodes)
+sol = ClarknWrightSol(nodes, 8)
+totalCost = CalculateSolutionCost(nodes, sol)
+
+# PlotGraph(sol,nodes)
+print(totalCost)
+print(len(sol))
+
+f = open("Solution.txt", "w")
+f.write("Cost:\n")
+f.write(str(totalCost))
+f.write("\nRoutes:")
+f.write(str(len(sol)))
+for route in sol:
+    f.write("\n")
+    for node in range(len(route)):
+        f.write(str(route[node]))
+        if node < len(route)-1:
+            f.write(",")
+
