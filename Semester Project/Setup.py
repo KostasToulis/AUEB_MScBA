@@ -1,4 +1,6 @@
 import math
+import random
+
 import numpy as np
 import matplotlib.pyplot as plt
 from sol_checker import calculate_route_details
@@ -10,7 +12,7 @@ def CalculateDistMatrix(nodes):
    distMatrix = np.zeros((len(nodes),len(nodes)))
    for node1 in nodes:
       for node2 in nodes:
-         distMatrix[node1.ID, node2.ID] = CalculateDistance(node1, node2)#/(node1.demand+1000)
+         distMatrix[node1.ID, node2.ID] = CalculateDistance(node1, node2)*(node1.demand+node2.demand)
    return distMatrix
 
 def PlotInitial(nodes):
@@ -25,23 +27,47 @@ def PlotGraph(routes):
       # route = np.asarray(route, dtype=np.int_)
       color = np.random.rand(3, )
       for i in range(1,len(route)):
-         plt.plot(route[i-1], route[i], linewidth=1, marker='*', color=color)
+         plt.plot(route[i-1].x, route[i].y, linewidth=1, marker='*', color=color)
    plt.show()
 
+def PlotRoute(route):
+   xcoords, ycoords = ([node.x for node in route], [node.y for node in route])
+   # ycoords = []
+   # for node in route:
+   #    xcoords.append(node.x)
+   #    ycoords.append(node.y)
+   plt.plot(xcoords, ycoords, linewidth=1, marker='*', color=np.random.rand(3,))
+   # plt.show()
 
-def CalculateSolutionCost(nodes, sol):
-   # cost = 0
-   # for route in sol:
-   #     for i in range(1,len(route)):
-   #         cost += CalculateDistance(nodes[i-1],nodes[i])*
+def CalculateSolutionCost(sol):
    total_cost = 0
    for route in sol:
-      nodes_sequence = [nodes[idd] for idd in route]
-      rt_tn_km, rt_load = calculate_route_details(nodes_sequence, 6)
+      # nodes_sequence = [nodes[idd] for idd in route]
+      rt_tn_km, rt_load = calculate_route_details(route, 6)
       total_cost += rt_tn_km
    return total_cost
 
-def CalculateRouteCost(nodes,route):
-   nodes_sequence = [nodes[idd] for idd in route]
-   rt_tn_km, rt_load = calculate_route_details(nodes_sequence, 6)
+def CalculateRouteCost(route):
+   rt_tn_km, rt_load = calculate_route_details(route, 6)
    return rt_tn_km
+
+def ReportSolution(sol, filename):
+   totalCost = CalculateSolutionCost(sol)
+   nodeIDs = []
+   for route in sol:
+      l = []
+      for node in route:
+         l.append(node.ID)
+      nodeIDs.append(l)
+
+   f = open(f"{filename}", "w")
+   f.write("Cost:\n")
+   f.write(str(totalCost))
+   f.write("\nRoutes:\n")
+   f.write(str(len(nodeIDs)))
+   for route in nodeIDs:
+      f.write("\n")
+      for node in range(len(route)):
+         f.write(str(route[node]))
+         if node < len(route) - 1:
+            f.write(",")
