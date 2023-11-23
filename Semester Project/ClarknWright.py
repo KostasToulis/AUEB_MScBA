@@ -122,9 +122,10 @@ def ClarknWrightSol(nodes, c):
     finalRoutes = []
     for i in range(1,len(nodes)):
         if nodes[i].route.isAdded == False:
-            finalRoutes.append(nodes[i].route)
+            finalRoutes.append(nodes[i].route.nodes)
             nodes[i].route.isAdded = True
-
+    for route in finalRoutes:
+        route.pop()
     return finalRoutes
     # coords = []
     # solutionDist = 0

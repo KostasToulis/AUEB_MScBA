@@ -8,6 +8,7 @@ from ModifiedNearestNeighbor import NearestNeighbor
 
 nodes, capacity, weigth = load_model("Instance.txt")
 # PlotInitial(nodes)
+
 # sol = ClarknWrightSol(nodes, 8)
 
 sol = LineSweep(nodes, 8)
