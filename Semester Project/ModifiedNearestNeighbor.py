@@ -11,7 +11,7 @@ def CalculateNewDistMatrix(nodes):
     return distMatrix
 
 def CalculateNeighborCost(target, neighbor):
-    return CalculateDistance(target,neighbor)/(1+neighbor.demand)
+    return CalculateDistance(target,neighbor)/(1+neighbor.demand) #*DemandAll-DemandSelected
 
 def SelectClosestNeighbor(targetNode, nodes):
     minCost = 100000

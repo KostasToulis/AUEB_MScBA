@@ -8,6 +8,7 @@ class Node:
         self.ID = idd
         self.isRouted = False
         self.demand = dem
+        self.isTabuTillIterator = -1
 
 
 def load_model(file_name):
@@ -120,5 +121,5 @@ def test_solution(file_name, all_nodes, capacity, empty_vehicle_weight):
     print('Solution is ΟΚ. Total Cost:', objective_calculated)
 
 all_nodes, capacity, empty_vehicle_weight = load_model('Instance.txt')
-test_solution('example_solution.txt', all_nodes, capacity, empty_vehicle_weight)
-# test_solution('Solution.txt', all_nodes, capacity, empty_vehicle_weight)
+# test_solution('example_solution.txt', all_nodes, capacity, empty_vehicle_weight)
+test_solution('Solution.txt', all_nodes, capacity, empty_vehicle_weight)

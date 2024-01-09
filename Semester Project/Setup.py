@@ -5,6 +5,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sol_checker import calculate_route_details
 
+
+# class Route:
+#    def __init__(self, ID, nodes):
+#       self.ID = ID
+#       self.nodes = nodes
+#       self.cost = self.CalculateCost(nodes)
+#       self.distance = self.CalculateRouteDistance(nodes)
+#       self.isAdded = False
+
 def CalculateDistance(node1, node2):
    return math.sqrt((node1.x - node2.x)**2 + (node1.y - node2.y)**2)
 
